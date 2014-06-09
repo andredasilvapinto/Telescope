@@ -39,7 +39,7 @@ Meteor.methods({
 
     // only let admins post as another user
     if(isAdmin(Meteor.user()))
-      userId = post.userId || user._id 
+      userId = post.userId || user._id; 
         
     // check that user can post
     if (!user || !canPost(user))
@@ -52,7 +52,7 @@ Meteor.methods({
     // check that there are no previous posts with the same link
     if(post.url && (typeof postWithSameLink !== 'undefined')){
       Meteor.call('upvotePost', postWithSameLink);
-      throw new Meteor.Error(603, i18n.t('This link has already been posted', postWithSameLink._id));
+      throw new Meteor.Error(603, i18n.t('This link has already been posted'), postWithSameLink._id);
     }
 
     if(!isAdmin(Meteor.user())){
@@ -105,7 +105,7 @@ Meteor.methods({
           postHeadline : headline,
           postId : postId
         }
-      }
+      };
       // call a server method because we do not have access to users' info on the client
       Meteor.call('newPostNotify', notification, function(error, result){
         //run asynchronously
@@ -118,6 +118,21 @@ Meteor.methods({
   },
   post_edit: function(post){
     // TODO: make post_edit server-side?
+  },
+  approvePost: function(post){
+    if(isAdmin(Meteor.user())){
+      var now = new Date().getTime();
+      Posts.update(post._id, {$set: {status: 2, submitted: now}});
+    }else{
+      throwError('You need to be an admin to do that.');
+    }
+  },
+  unapprovePost: function(post){
+    if(isAdmin(Meteor.user())){
+      Posts.update(post._id, {$set: {status: 1}});
+    }else{
+      throwError('You need to be an admin to do that.');
+    }
   },
   clickedPost: function(post, sessionId){
     // only let clients increment a post's click counter once per session

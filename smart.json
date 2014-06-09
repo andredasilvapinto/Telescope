@@ -3,13 +3,11 @@
   "packages": {
     "momentjs": {},
     "crypto-base": {},
-    "database-forms": {
-      "git": "git://github.com/SachaG/database-forms.git"
-    },
     "crypto-md5": {},
     "iron-router": {},
-    "nprogress": {},
     "fast-render": {},
-    "spin": {}
+    "spin": {},
+    "autoform": {},
+    "iron-router-progress": {}
   }
 }

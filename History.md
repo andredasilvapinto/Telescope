@@ -1,3 +1,14 @@
+## v0.8.1 “FlexScope”
+
+* Extracted part of the tags feature into its own package. 
+* Made subscription preloader more flexible.
+* Made navigation menu dynamic. 
+
+## v0.8 “BlazeScope”
+
+* Updated for Meteor 0.8.1.1/Blaze compatibility.
+* Using Collection2/SimpleSchema/Autoforms for Settings form. 
+
 ## v0.7.4 “InterScope”
 
 * Added basic internationalization (thanks Toam!).

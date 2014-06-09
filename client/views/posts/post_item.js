@@ -75,6 +75,9 @@ Template.post_item.helpers({
   },
   pointsUnitDisplayText: function(){
     return this.votes == 1 ? i18n.t('point') : i18n.t('points');
+  },
+  isApproved: function(){
+    return this.status == STATUS_APPROVED;
   }
 });
 
@@ -94,20 +97,20 @@ var recalculatePosition = function ($object, pArray) {
 }
 
 Template.post_item.rendered = function(){
-  var instance = this,
-      $instance = $(instance.firstNode.nextSibling),
-      top = $instance.position().top;
+  // var instance = this,
+  //     $instance = $(instance.firstNode.nextSibling),
+  //     top = $instance.position().top;
 
-  // if this is the first render, initialize array, else push current position
-  if(typeof instance.pArray === 'undefined'){
-    instance.pArray = [top]
-  }else{
-    instance.pArray.push(top);
-  }
+  // // if this is the first render, initialize array, else push current position
+  // if(typeof instance.pArray === 'undefined'){
+  //   instance.pArray = [top]
+  // }else{
+  //   instance.pArray.push(top);
+  // }
 
-  // if this is *not* the first render, recalculate positions
-  if(instance.pArray.length>1)
-    recalculatePosition($instance, instance.pArray);
+  // // if this is *not* the first render, recalculate positions
+  // if(instance.pArray.length>1)
+  //   recalculatePosition($instance, instance.pArray);
 
 };
 
@@ -132,5 +135,13 @@ Template.post_item.events({
     $this.toggleClass("active");
     $share.toggleClass("hidden");
     $share.find('.share-replace').sharrre(SharrreOptions);
+  },
+  'click .approve-link': function(e, instance){
+    Meteor.call('approvePost', this);
+    e.preventDefault();
+  },  
+  'click .unapprove-link': function(e, instance){
+    Meteor.call('unapprovePost', this);
+    e.preventDefault();
   }
 });

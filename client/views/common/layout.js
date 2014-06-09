@@ -1,6 +1,6 @@
 Template.layout.helpers({
   pageName : function(){
-    getCurrentTemplate();
+    // getCurrentTemplate();
   },
   backgroundColor: function(){
   	return getSetting('backgroundColor');
@@ -24,13 +24,8 @@ Template.layout.created = function(){
 }
 
 Template.layout.rendered = function(){
-    if(currentScroll=Session.get('currentScroll')){
-      $('body').scrollTop(currentScroll);
-      Session.set('currentScroll', null);
-    }
-
-    // set title
-    var title = getSetting("title");
-    var tagline = getSetting("tagline");
-    document.title = (tagline ? title+': '+tagline : title) || "";
+  if(currentScroll=Session.get('currentScroll')){
+    $('body').scrollTop(currentScroll);
+    Session.set('currentScroll', null);
+  }
 }
