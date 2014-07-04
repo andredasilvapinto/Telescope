@@ -9,7 +9,8 @@ STATUS_PENDING=1;
 STATUS_APPROVED=2;
 STATUS_REJECTED=3;
 
-viewNav = typeof viewNav === 'undefined' ? [] : viewNav;
+navItems.push('adminMenu');
+
 viewNav = viewNav.concat([
   {
     route: 'posts_top',
@@ -29,7 +30,6 @@ viewNav = viewNav.concat([
   }   
 ]);
 
-adminNav = typeof adminNav === 'undefined' ? [] : adminNav;
 adminNav = adminNav.concat([
   {
     route: 'posts_pending',
@@ -44,10 +44,6 @@ adminNav = adminNav.concat([
     label: 'Settings'
   },
   {
-    route: 'logs',
-    label: 'Search Logs'
-  },
-  {
     route: 'toolbox',
     label: 'Toolbox'
   }   
@@ -60,9 +56,5 @@ Deps.autorun(function() {
   // userId() can be changed before user(), because loading profile takes time
   if(Meteor.userId()) {
     Meteor.subscribe('notifications');
-    if(isAdmin(Meteor.user())){
-      // Subscribe to all users for now to make user selection autocomplete work
-      Meteor.subscribe('allUsersAdmin');
-    }
   }
 });

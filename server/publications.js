@@ -43,7 +43,7 @@ Meteor.publish('postUsers', function(postId) {
         users = [];
         
     if(post) {
-      var comments = Comments.find({post: post._id}).fetch();
+      var comments = Comments.find({postId: post._id}).fetch();
       // get IDs from all commenters on the post, plus post author's ID
       users = _.pluck(comments, "userId");
       users.push(post.userId);
@@ -93,8 +93,9 @@ Meteor.publish('allUsers', function(filterBy, sortBy, limit) {
 // TODO: find a better way
 
 Meteor.publish('allUsersAdmin', function() {
+  var selector = getSetting('requirePostInvite') ? {isInvited: true} : {};
   if (isAdminById(this.userId)) {
-    return Meteor.users.find({isInvited: true});
+    return Meteor.users.find(selector);
   } else {
     return [];
   }
@@ -127,14 +128,12 @@ Meteor.publish('postsList', function(terms) {
   if(canViewById(this.userId)){
     var parameters = getParameters(terms),
         posts = Posts.find(parameters.find, parameters.options);
-    if(terms.query)
-      logSearch(terms.query);
     // console.log('//-------- Subscription Parameters:');
     // console.log(parameters.find);
     // console.log(parameters.options);
     // console.log('Found '+posts.fetch().length+ ' posts:');
     // posts.rewind();
-    // console.log(_.pluck(posts.fetch(), 'headline'));
+    // console.log(_.pluck(posts.fetch(), 'title'));
     return posts;
   }
   return [];
@@ -146,7 +145,7 @@ Meteor.publish('postsList', function(terms) {
 
 Meteor.publish('postComments', function(postId) {
   if(canViewById(this.userId)){  
-    return Comments.find({post: postId});
+    return Comments.find({postId: postId});
   }
   return [];
 });
@@ -183,10 +182,3 @@ Meteor.publish('notifications', function() {
   return [];
 });
 
-Meteor.publish('searches', function(limit) {
-  var limit = typeof limit === undefined ? 20 : limit; 
-  if(isAdminById(this.userId)){
-   return Searches.find({}, {limit: limit, sort: {timestamp: -1}});
-  }
-  return [];
-});

@@ -1,10 +1,3 @@
-// commentIsNew=function(comment){
-//   var d=new Date(comment.submitted);
-//   var commentIsNew=d > new Date(Session.get('requestTimestamp'));
-//   // console.log("------------\n body: "+comment.body+" \n comment submission date: "+d+" \n  requestTimestamp: "+new Date(Session.get('requestTimestamp'))+" \n now: "+new Date()+"\nisNew: "+commentIsNew);
-//   return commentIsNew;
-// };
-
 findQueueContainer=function($comment){
   // go up and down the DOM until we find either A) a queue container or B) an unqueued comment
   $up=$comment.prevAll(".queue-container, .comment-displayed").first();
@@ -101,8 +94,7 @@ Template.comment_item.rendered=function(){
 
 Template.comment_item.helpers({
   full_date: function(){
-    var submitted = new Date(this.submitted);
-    return submitted.toString();
+    return this.createdAt.toString();
   },
   child_comments: function(){
     // return only child comments
@@ -124,20 +116,13 @@ Template.comment_item.helpers({
     else
       return false;
   },
-  body_formatted: function(){
-    if(this.body){
-      var converter = new Markdown.Converter();
-      var html_body=converter.makeHtml(this.body);
-      return html_body.autoLink();
-    }
-  },
   showChildComments: function(){
     // TODO: fix this
     // return Session.get('showChildComments');
     return true;
   },
   ago: function(){
-    return moment(this.submitted).fromNow();
+    return moment(this.createdAt).fromNow();
   },
   upvoted: function(){
     return Meteor.user() && _.include(this.upvoters, Meteor.user()._id);
@@ -160,7 +145,7 @@ Template.comment_item.events({
     var comment_id = Comments.update(current_comment_id,
         {
           $set: {
-            submitted:  new Date().getTime()
+            postedAt:  new Date().getTime()
           }
         }
       );

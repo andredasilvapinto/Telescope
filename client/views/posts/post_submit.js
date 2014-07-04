@@ -6,68 +6,105 @@ Template.post_submit.helpers({
     return Categories.find();
   },
   users: function(){
-    return Meteor.users.find();
+    return Meteor.users.find({}, {sort: {'profile.name': 1}});
   },
   userName: function(){
     return getDisplayName(this);
   },
-  isSelected: function(){
-    var post=Posts.findOne(Session.get('selectedPostId'));
-    return (post && this._id == post.userId) ? 'selected' : '';
+  isSelected: function(user){
+    return user._id == Meteor.userId() ? "selected" : "";
+  },
+  showPostedAt: function () {
+    if(Session.get('currentPostStatus') == STATUS_APPROVED){
+      return 'visible'
+    }else{
+      return 'hidden'
+    }
+    // return (Session.get('currentPostStatus') || STATUS_APPROVED) == STATUS_APPROVED; // default to approved
   }
 });
 
 Template.post_submit.rendered = function(){
+  Session.set('currentPostStatus', STATUS_APPROVED);
   Session.set('selectedPostId', null);
   if(!this.editor && $('#editor').exists())
     this.editor= new EpicEditor(EpicEditorOptions).load();
-  $('#submitted').datepicker().on('changeDate', function(ev){
-    $('#submitted_hidden').val(moment(ev.date).valueOf());
-  });
+
+  $('#postedAtDate').datepicker();
 
   // $("#postUser").selectToAutocomplete(); // XXX
 
 }
 
 Template.post_submit.events({
+  'change input[name=status]': function (e, i) {
+    Session.set('currentPostStatus', e.currentTarget.value);
+  },
   'click input[type=submit]': function(e, instance){
     e.preventDefault();
 
     $(e.target).addClass('disabled');
+
+    // ------------------------------ Checks ------------------------------ //
 
     if(!Meteor.user()){
       throwError(i18n.t('You must be logged in.'));
       return false;
     }
 
-    var title= $('#title').val();
-    var url = $('#url').val();
-    var shortUrl = $('#short-url').val();
-    var body = instance.editor.exportFile();
-    var categories=[];
-    var sticky=!!$('#sticky').attr('checked');
-    var submitted = $('#submitted_hidden').val();
-    var userId = $('#postUser').val();
-    var status = parseInt($('input[name=status]:checked').val());
+    // ------------------------------ Properties ------------------------------ //
 
-    $('input[name=category]:checked').each(function() {
-      categories.push(Categories.findOne($(this).val()));
-     });
+    // Basic Properties
 
     var properties = {
-        headline: title
-      , body: body
-      , shortUrl: shortUrl
-      , categories: categories
-      , sticky: sticky
-      , submitted: submitted
-      , userId: userId
-      , status: status
+      title: $('#title').val(),
+      body: instance.editor.exportFile(),
+      sticky: $('#sticky').is(':checked'),
+      userId: $('#postUser').val(),
+      status: parseInt($('input[name=status]:checked').val())
     };
-    if(url){
+
+    // PostedAt
+
+    var setPostedAt = false;
+    var postedAt = new Date(); // default to current browser date and time
+    var postedAtDate = $('#postedAtDate').datepicker('getDate');
+    var postedAtTime = $('#postedAtTime').val();
+
+    if($('#postedAtDate').exists() && postedAtDate != "Invalid Date"){ // if custom date is set, use it
+      postedAt = postedAtDate;
+      setPostedAt = true;
+    }
+
+    if($('#postedAtTime').exists() && postedAtTime.split(':').length==2){ // if custom time is set, use it
+      var hours = postedAtTime.split(':')[0];
+      var minutes = postedAtTime.split(':')[1];
+      postedAt = moment(postedAt).hour(hours).minute(minutes).toDate();
+      setPostedAt = true;
+    }
+
+    if(setPostedAt) // if either custom date or time has been set, pass result to properties
+      properties.postedAt = postedAt 
+
+
+    // URL
+
+    var url = $('#url').val();
+    if(!!url){
       var cleanUrl = (url.substring(0, 7) == "http://" || url.substring(0, 8) == "https://") ? url : "http://"+url;
       properties.url = cleanUrl;
     }
+
+    // Categories
+
+    properties.categories = [];
+    $('input[name=category]:checked').each(function() {
+      properties.categories.push(Categories.findOne($(this).val()));
+     });
+
+    // console.log(properties)
+
+    // ------------------------------ Insert ------------------------------ //
 
     Meteor.call('post', properties, function(error, post) {
       if(error){
@@ -77,12 +114,13 @@ Template.post_submit.events({
         if(error.error == 603)
           Router.go('/posts/'+error.details);
       }else{
-        trackEvent("new post", {'postId': post.postId});
+        trackEvent("new post", {'postId': post._id});
         if(post.status === STATUS_PENDING)
           throwError('Thanks, your post is awaiting approval.')
-        Router.go('/posts/'+post.postId);
+        Router.go('/posts/'+post._id);
       }
     });
+
   },
   'click .get-title-link': function(e){
     e.preventDefault();

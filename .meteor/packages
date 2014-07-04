@@ -24,3 +24,11 @@ collection2
 accounts-facebook
 iron-router-progress
 telescope-tags
+telescope-base
+telescope-search
+telescope-lib
+telescope-rss
+telescope-api
+jquery-hotkeys
+marked
+bootstrap3-datepicker

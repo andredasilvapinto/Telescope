@@ -1,4 +1,64 @@
-Comments = new Meteor.Collection('comments');
+Comments = new Meteor.Collection("comments", {
+  schema: new SimpleSchema({
+    _id: {
+      type: String,
+      optional: true
+    },
+    createdAt: {
+      type: Date,
+      optional: true
+    },
+    postedAt: { // for now, comments are always created and posted at the same time
+      type: Date,
+      optional: true
+    },
+    body: {
+      type: String,
+    },
+    baseScore: {
+      type: Number,
+      decimal: true,
+      optional: true
+    },
+    score: {
+      type: Number,
+      decimal: true,
+      optional: true
+    },
+    upvotes: {
+      type: Number,
+      optional: true
+    },
+    upvoters: {
+      type: [String], // XXX
+      optional: true
+    },
+    downvotes: {
+      type: Number,
+      optional: true
+    },
+    downvoters: {
+      type: [String], // XXX
+      optional: true
+    },
+    author: {
+      type: String,
+      optional: true
+    },
+    inactive: {
+      type: Boolean,
+      optional: true
+    },
+    postId: {
+      type: String, // XXX
+      optional: true
+    },
+    userId: {
+      type: String, // XXX
+      optional: true
+    }
+  })
+});
 
 Comments.deny({
   update: function(userId, post, fieldNames) {
@@ -31,7 +91,7 @@ Meteor.methods({
           'commentAuthorName': getDisplayName(user),
           'commentExcerpt': trimWords(stripMarkdown(cleanText),20),
           'postId': postId,
-          'postHeadline' : post.headline
+          'postTitle' : post.title
         };
 
     // check that user can comment
@@ -47,11 +107,16 @@ Meteor.methods({
       throw new Meteor.Error(704,i18n.t('Your comment is empty.'));
           
     var comment = {
-        post: postId,
-        body: cleanText,
-        userId: user._id,
-        submitted: new Date().getTime(),
-        author: getDisplayName(user)
+      postId: postId,
+      body: cleanText,
+      userId: user._id,
+      createdAt: new Date(),
+      postedAt: new Date(),
+      upvotes: 0,
+      downvotes: 0,
+      baseScore: 0,
+      score: 0,
+      author: getDisplayName(user)
     };
     
     if(parentCommentId)
