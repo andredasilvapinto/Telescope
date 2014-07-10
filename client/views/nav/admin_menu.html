@@ -1,11 +1,11 @@
 <template name="adminMenu">
   {{#if isAdmin}}
     <div class="dropdown">
-      <a class="admin" href="/">{{i18n "Admin"}}</a>
+      <a class="admin dropdown-top-level" href="/">{{i18n "Admin"}}</a>
       <div class="dropdown-menu">
         <ul role="menu" aria-labelledby="dLabel">
           {{#each menu}}
-            {{> menuItem this}}
+            {{> UI.dynamic template=menuItem data=this}}
           {{/each}}
         </ul>
       </div>

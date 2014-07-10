@@ -9,10 +9,10 @@
       "fast-render": {},
       "spin": {},
       "autoform": {},
-      "iron-router-progress": {},
       "jquery-hotkeys": {},
       "marked": {},
-      "bootstrap3-datepicker": {}
+      "bootstrap3-datepicker": {},
+      "subs-manager": {}
     },
     "packages": {
       "momentjs": {
@@ -47,13 +47,8 @@
       },
       "autoform": {
         "git": "https://github.com/aldeed/meteor-autoform.git",
-        "tag": "v0.13.5",
-        "commit": "27dd5b912eeba687b228a6a7c2c14eef63b12cca"
-      },
-      "iron-router-progress": {
-        "git": "https://github.com/Multiply/iron-router-progress.git",
-        "tag": "v0.4.1",
-        "commit": "496fcda9a6ec352b4733725f60c6f280250c3541"
+        "tag": "v0.14.0",
+        "commit": "30de032833052ea61e9d37bca5523264309d4478"
       },
       "jquery-hotkeys": {
         "git": "https://github.com/terryschen/meteor-jquery-hotkeys.git",
@@ -69,6 +64,11 @@
         "git": "https://github.com/rajit/bootstrap3-datepicker.git",
         "tag": "v0.2.1",
         "commit": "442484eb1c8eb00c6b9e0e9c88accc934cf8f04a"
+      },
+      "subs-manager": {
+        "git": "https://github.com/meteorhacks/subs-manager.git",
+        "tag": "v1.0.1",
+        "commit": "38317052d1601002d4dff537e4e0f61d1aa36e6d"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

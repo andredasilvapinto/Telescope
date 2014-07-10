@@ -21,3 +21,8 @@ dump/*
 settings.json
 .idea
 *.iml
+
+scratch
+
+.deploy
+.deploy/*

@@ -1,7 +1,3 @@
-// Posts = new Meteor.Collection('posts');
-
-// Note: XXX = change this
-
 postSchemaObject = {
   _id: {
     type: String,
@@ -202,6 +198,13 @@ Meteor.methods({
 
     post = _.extend(post, properties);
 
+    // ------------------------------ Callbacks ------------------------------ //
+
+    // run all post submit server callbacks on post object successively
+    post = postSubmitServerCallbacks.reduce(function(result, currentFunction) {
+        return currentFunction(result);
+    }, post);
+
     // ------------------------------ Insert ------------------------------ //
 
     // console.log(post)
@@ -224,7 +227,7 @@ Meteor.methods({
           postAuthorName : getDisplayName(postAuthor),
           postAuthorId : post.userId,
           postTitle : title,
-          postId : postId
+          postId : post._id
         }
       };
       // call a server method because we do not have access to users' info on the client

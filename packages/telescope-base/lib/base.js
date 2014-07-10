@@ -1,7 +1,9 @@
 // Initialize common arrays
 
-// array containing properties to be added to the post schema on startup.
+// array containing properties to be added to the post/settings/comments schema on startup.
 addToPostSchema = [];
+addToCommentsSchema = [];
+addToSettingsSchema = [];
 
 // array containing items in the views menu
 viewNav = [];
@@ -11,9 +13,6 @@ adminNav = [];
 
 // array containing subscriptions to be preloaded
 preloadSubscriptions = [];
-
-// array containing post modules (not used yet)
-postModules = ['postRank', 'postVote', 'postInfo', 'postShare', 'postDiscuss'];
 
 // array containing nav items; initialize with views menu
 navItems = ['viewsMenu'];
@@ -51,3 +50,54 @@ viewParameters.digest = function (terms, baseParameters) {
   });
   return parameters;
 }
+
+// array containing post modules
+modulePositions = [
+  'left-left',
+  'left-center',
+  'left-right',
+  'center-left',
+  'center-center',
+  'center-right',
+  'right-left',
+  'right-center',
+  'right-right'
+];
+
+postModules = [
+  {
+    template: 'postUpvote',
+    position: 'left-left'
+  },
+  {
+    template: 'postContent', 
+    position: 'center-center'
+  },
+  {
+    template: 'postDiscuss',
+    position: 'right-right'
+  }
+];
+
+// ------------------------------ Callbacks ------------------------------ //
+
+postSubmitClientCallbacks = [];
+postSubmitServerCallbacks = [];
+
+postEditClientCallbacks = [];
+
+commentEditClientCallbacks = []; // not used yet
+commentEditServerCallbacks = []; // not used yet
+
+commentEditClientCallbacks = []; // not used yet
+
+// ------------------------------ Dynamic Templates ------------------------------ //
+
+
+templates = {}
+
+getTemplate = function (name) {
+  // if template has been overwritten, return this; else return template name
+  return !!templates[name] ? templates[name] : name;
+}
+

@@ -1,4 +1,4 @@
-Template.post_edit.helpers({
+Template[getTemplate('post_edit')].helpers({
   created: function(){
     return moment(this.createdAt).format("MMMM Do, h:mm:ss a");
   },
@@ -51,7 +51,7 @@ Template.post_edit.helpers({
   }
 });
 
-Template.post_edit.rendered = function(){
+Template[getTemplate('post_edit')].rendered = function(){
   Session.set('currentPostStatus', this.status);
 
   var post = this.data.post;
@@ -68,7 +68,7 @@ Template.post_edit.rendered = function(){
 
 }
 
-Template.post_edit.events({
+Template[getTemplate('post_edit')].events({
   'change input[name=status]': function (e, i) {
     Session.set('currentPostStatus', e.currentTarget.value);
   },
@@ -86,20 +86,10 @@ Template.post_edit.events({
     // Basic Properties
 
     var properties = {
-      title:         $('#title').val(),
-      body:          instance.editor.exportFile()
+      title:            $('#title').val(),
+      body:             instance.editor.exportFile(),
+      categories:  []
     };
-
-    // Categories
-
-    var categoriesArray = [];
-    $('input[name=category]:checked').each(function() {
-      var categoryId = $(this).val();
-      if(category = Categories.findOne(categoryId)){
-        categoriesArray.push(category);
-      }
-    });
-    properties.categoriesArray = categoriesArray;
 
     // URL
 
@@ -160,6 +150,14 @@ Template.post_edit.events({
         }
       }
     }
+
+    // ------------------------------ Callbacks ------------------------------ //
+
+    // run all post edit client callbacks on properties object successively
+    properties = postEditClientCallbacks.reduce(function(result, currentFunction) {
+        return currentFunction(result);
+    }, properties);
+
     // console.log(properties)
 
     // ------------------------------ Update ------------------------------ //

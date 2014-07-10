@@ -1,3 +1,12 @@
+## v0.9.1
+
+* Using Arunoda's [Subscription Manager](https://github.com/meteorhacks/subs-manager).
+* Fixing mobile version.
+
+## v0.9
+
+* See [blog post](http://telesc.pe/blog/telescope-v09-modulescope) for changelog. 
+
 ## v0.8.3 “CleanScope”
 
 * Refactored the way dating and timestamping works with pending/approved posts. 
