@@ -1,6 +1,10 @@
-## v0.9.2.1
+## v0.9.1.2
 
 * Added `lastCommentedAt` property to posts. 
+* Added hooks to `post_edit` and `post_submit`'s `rendered` callback.
+* Embedly module now supports video embedding in a lightbox.
+* Updated to Meteor 0.8.3.
+* Updated packages.
 
 ## v0.9.1
 
