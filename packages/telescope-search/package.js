@@ -1,17 +1,21 @@
 Package.describe({summary: "Telescope search package"});
 
-Package.on_use(function (api) {
+Package.onUse(function (api) {
 
-  api.use(['telescope-lib', 'telescope-base', 'simple-schema'], ['client', 'server']);
+  api.use(['telescope-lib', 'telescope-base', 'aldeed:simple-schema'], ['client', 'server']);
 
   api.use([
     'jquery',
     'underscore',
-    'iron-router',
-    'templating'
+    'iron:router',
+    'templating',
+    'tap:i18n'
   ], 'client');
 
-  api.add_files(['lib/search.js'], ['client', 'server']);
+  api.add_files([
+    'lib/search.js',
+    'package-tap.i18n'
+  ], ['client', 'server']);
 
   api.add_files([
     'lib/client/routes.js',
@@ -26,6 +30,15 @@ Package.on_use(function (api) {
     'lib/server/log_search.js',
     'lib/server/publications.js'
     ], ['server']);
-  
+
+  api.add_files([
+    "i18n/de.i18n.json",
+    "i18n/en.i18n.json",
+    "i18n/es.i18n.json",
+    "i18n/fr.i18n.json",
+    "i18n/it.i18n.json",
+    "i18n/zh-CN.i18n.json",
+  ], ["client", "server"]);
+
   api.export(['adminNav', 'viewParameters']);
 });

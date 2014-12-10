@@ -2,22 +2,11 @@ Accounts.ui.config({
   passwordSignupFields: 'USERNAME_AND_EMAIL'
 });
 
-EpicEditorOptions={
-	container:  'editor',
-	basePath:   '/editor',
-	clientSideStorage: false,
-	theme: {
-		base:'/themes/base/epiceditor.css',
-		preview:'/themes/preview/github.css',
-		editor:'/themes/editor/epic-light.css'
-	}
-};
-
 SharrreOptions={
 	share: {
 	  googlePlus: true,
 	  // facebook: true,
-	  twitter: true,
+	  twitter: true
 	},
 	buttons: {
 	  googlePlus: {size: 'tall', annotation:'bubble'},

@@ -1,3 +1,105 @@
+## v0.10.0 “RefactorScope”
+
+* Renaming Errors to Messages (thanks @yourcelf!).
+* Adding `fast-render` (thanks @arunoda!).
+* Extracted digest into its own package.
+* Adding "scheduled" view that shows upcoming scheduled posts.
+* Bringing back "delete post" link that was removed by mistake.
+* Made user profile display page modular.
+* Made user profile edit page modular.
+* Started extracting invites into their own package.
+
+## v0.9.11 “FormScope”
+
+* Now using [Autoform](https://github.com/aldeed/meteor-autoform/)'s **quickform** feature to generate post submit and edit forms. 
+* Various fixes by [@anthonymayer](https://github.com/anthonymayer).
+* Now using [fourseven:scss](https://github.com/fourseven/meteor-scss) to directly compile SCSS files. 
+* Renamed `post` method to `submitPost`. 
+* Post editing now happens via a `postEdit` method.
+* Categories are now normalized (only the `_id` is stored on the post object, not the whole category object).
+* Refactored Embedly package; now fills in description as well (thanks [@kvindasAB](https://github.com/kvindasAB)!).
+* Thumbnail height and width are now customizable in settings panel.
+* Settings and Post forms now i18n'ized.
+
+## v0.9.10 “i18nScope”
+
+* Now using [tap:i18n](https://github.com/TAPevents/tap-i18n) for internationalization (thanks a ton to @theosp).
+* Each package is now i18n'd invididually.
+* Chinese i18n code is now `zh-CN`, not `zh`.
+* Various fixes (thanks @anthonymayer).
+* Upgrade Avatar package (thanks @bengott).
+
+## v0.9.9
+
+* Updating to Meteor 1.0.
+* Updating to Iron Router 1.0.
+* Adding view counter (thanks @steffenstraetz! See [PR #489](https://github.com/TelescopeJS/Telescope/pull/489))
+* Splitting out `router.js` in multiple files.
+* URL can now be removed when editing a post (thanks @massimilianomarini! See [PR 484](https://github.com/TelescopeJS/Telescope/pull/484)).
+* Now waiting on `allUsersAdmin` subscription for post submit page (thanks @kai101! See [PR 508](https://github.com/TelescopeJS/Telescope/pull/508))
+* Putting server-side routes for email template tests in their own respective packages.
+
+## v0.9.8
+
+* Fixing #457 (pending posts view not working).
+* Added German translation (thanks @Helmi!).
+* Added `?q=` parameter to searches (thanks @yourcelf!).
+* Abstracting `isAdmin` (thanks @yourcelsf!).
+* Refactoring `getPostsParameters` (thanks @delgermurun!).
+* Using `bengott:avatar` package for avatars (thanks @bengott!).
+* Upgrading to Meteor 0.9.3.1.
+
+## v0.9.7 “SettingsScope”
+
+* Updating to Meteor 0.9.3.
+* Improving RSS feed (thanks @delgermurun!).
+* Fixed redirection issues on sign-up (thanks @steffenstraetz!)
+* Fixed bug on Twitter sign-in.
+* Splitting up the settings form into sub-sections.
+* Adding help text to settings form.
+* Fixing problem with daily view theming.
+* Improving avatar stuff (thanks @shaialon and @bengott!). 
+
+## v0.9.6
+
+* Fixed security hole in user update. 
+* Kadira is now included by default. 
+* Comments now have their own feed (thanks @delgermurun!).
+* Fixed URL collision bug (thanks @GoodEveningMiss!).
+* Now using [`account-templates`](https://github.com/splendido/accounts-templates-core) (thanks @splendido!).
+* Retinizing avatar sizes (thanks @shaialon!).
+
+## v0.9.5 “FixScope”
+
+* Fixed `/settings` bug (thanks @steffenstraetz!).
+* Code cleanup (thanks @wulfmeister!).
+* Fixed upvote/downvote concurrency bug (thanks @spifd!).
+* Renamed `SubmitServerCallbacks` to `SubmitMethodCallbacks` for posts and comments.
+* Added `AfterSubmitMethodCallbacks` for posts and comments.
+* Made notifications into their own `telescope-notifications` package.
+* `telescope-update-prompt` package now sends user, post, and comment count when phoning home.
+
+## v0.9.4 “UpdateScope”
+
+* Removed unneeded allow insert on Posts and Comments. 
+* Renaming `postMeta` template to `postInfo` to avoid ambiguity.
+* Fixing avatar code.
+* Adding update prompt package.
+* Upgrading to Meteor 0.9.2.
+* Do not remove deleted comments from database, use `isDeleted` flag instead.
+* Now showing "X new posts" instead of just displaying them. Thanks @dburles!
+
+## v0.9.3 “DailyScope”
+
+* Show user comments on user profile page. 
+* Move votes to their own `user.votes` object.
+* Add daily view.
+* Default root view is now customizable. 
+* Updated app to 0.9.0.
+* Updated all packages to be 0.9.0-compatible.
+* Fixed XSS bug (CVE ID: CVE-2014-5144) by sanitizing user input server-side.
+* Now storing both markdown and HTML versions of content. 
+
 ## v0.9.2.6 “InviteScope”
 
 * Added new invite features (thanks [@callmephilip](https://github.com/callmephilip)!)

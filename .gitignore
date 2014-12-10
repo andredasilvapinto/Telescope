@@ -19,6 +19,7 @@ dump/
 dump/*
 
 settings.json
+settings.json.not-used
 .idea
 *.iml
 
@@ -26,3 +27,7 @@ scratch
 
 .deploy
 .deploy/*
+### Meteor template
+.meteor/local
+.meteor/meteorite
+mup.json

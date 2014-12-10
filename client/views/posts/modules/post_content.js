@@ -19,25 +19,15 @@ Template[getTemplate('postContent')].helpers({
     return moment(time).format("MMMM Do, h:mm:ss a");
   },
   userAvatar: function(){
+    // THIS FUNCTION IS DEPRECATED -- package bengott:avatar is used instead.
     var author = Meteor.users.findOne(this.userId, {reactive: false});
     if(!!author)
-      return getAvatarUrl(author);
+      return getAvatarUrl(author); // ALSO DEPRECATED
   },
   inactiveClass: function(){
     return (isAdmin(Meteor.user()) && this.inactive) ? i18n.t('inactive') : "";
   },
   commentsDisplayText: function(){
     return this.comments == 1 ? i18n.t('comment') : i18n.t('comments');
-  }
-});
-
-Template[getTemplate('postContent')].events({
-  'click .approve-link': function(e, instance){
-    Meteor.call('approvePost', this);
-    e.preventDefault();
-  },  
-  'click .unapprove-link': function(e, instance){
-    Meteor.call('unapprovePost', this);
-    e.preventDefault();
   }
 });

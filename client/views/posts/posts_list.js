@@ -1,6 +1,12 @@
 Template[getTemplate('posts_list')].helpers({
+  before_post_item: function () {
+    return getTemplate('before_post_item');
+  },
   post_item: function () {
     return getTemplate('post_item');
+  },
+  after_post_item: function () {
+    return getTemplate('after_post_item');
   },
   posts : function () {
     if(this.postsList){ // XXX
@@ -12,13 +18,14 @@ Template[getTemplate('posts_list')].helpers({
       return posts;
     }
   },
-  hasMorePosts: function(){
-    // as long as we ask for N posts and all N posts showed up, then keep showing the "load more" button
-    return parseInt(Session.get('postsLimit')) == this.postsCount
+  postsLoadMore: function () {
+    return getTemplate('postsLoadMore');
   },
-  loadMoreUrl: function () {
-    var count = parseInt(Session.get('postsLimit')) + parseInt(getSetting('postsPerPage', 10));
-    var categorySegment = Session.get('categorySlug') ? Session.get('categorySlug') + '/' : '';
-    return '/' + Session.get('view') + '/' + categorySegment + count;
+  postsListIncoming: function () {
+    return getTemplate('postsListIncoming');
   }
 });
+
+Template[getTemplate('posts_list')].created = function() {
+  Session.set('listPopulatedAt', new Date());
+};

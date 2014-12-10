@@ -9,22 +9,26 @@ Meteor.startup(function () {
 
   Router.onBeforeAction(Router._filters.isAdmin, {only: ['categories']});
 
-  Router.map(function() {
-
-    // Categories
-
-    this.route('posts_category', {
-      path: '/category/:slug/:limit?',
-      controller: PostsListController,
-      onAfterAction: function() {
-        Session.set('categorySlug', this.params.slug);
-      }
-    });
-
-    // Categories Admin
-
-    this.route('categories');
-
+  PostsCategoryController = PostsListController.extend({
+    view: 'category'
   });
+
+
+  // Categories
+
+  Router.route('/category/:slug/:limit?', {
+    name: 'posts_category',
+    controller: PostsCategoryController,
+    onAfterAction: function() {
+      Session.set('categorySlug', this.params.slug);
+    }
+  });
+
+  // Categories Admin
+
+  Router.route('/categories', {
+    name: 'categories'
+  });
+
 
 });

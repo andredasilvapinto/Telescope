@@ -42,7 +42,7 @@ UI.registerHelper('isAdmin', function(showError) {
     return true;
   }else{
     if((typeof showError === "string") && (showError === "true"))
-      throwError(i18n.t('Sorry, you do not have access to this page'));
+      flashMessage(i18n.t('sorry_you_do_not_have_access_to_this_page'), "error");
     return false;
   }
 });
@@ -60,5 +60,22 @@ UI.registerHelper('log', function(context){
 });
 
 UI.registerHelper("formatDate", function(datetime, format) {
+  Session.get('momentLocale'); // depend on session variable to reactively rerun the helper
   return moment(datetime).format(format);
+});
+
+UI.registerHelper("timeAgo", function(datetime) {
+  Session.get('momentLocale'); // depend on session variable to reactively rerun the helper
+  return moment(datetime).fromNow()
+});
+
+UI.registerHelper("sanitize", function(content) {
+  console.log('cleaning up…')
+  console.log(content)
+  return cleanUp(content);
+});
+
+UI.registerHelper('pluralize', function(count, string) {
+  string = count === 1 ? string : string + 's';
+  return i18n.t(string);
 });

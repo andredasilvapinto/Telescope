@@ -11,6 +11,15 @@ Meteor.startup(function () {
   });
 });
 
+Meteor.methods({
+  removeMigration: function (name) {
+    if (isAdmin(Meteor.user())) {
+      console.log('// removing migration: '+name)
+      Migrations.remove({name: name});
+    }
+  }
+});
+
 // wrapper function for all migrations
 var runMigration = function (migrationName) {
   var migration = Migrations.findOne({name: migrationName});
@@ -18,7 +27,7 @@ var runMigration = function (migrationName) {
   if (migration){
     if(typeof migration.finishedAt === 'undefined'){
       // if migration exists but hasn't finished, remove it and start fresh
-      console.log('!!! Found incomplete migration "'+migrationName+'", removing and running again.')
+      console.log('!!! Found incomplete migration "'+migrationName+'", removing and running again.');
       Migrations.remove({name: migrationName});
     }else{
       // do nothing
@@ -39,7 +48,7 @@ var runMigration = function (migrationName) {
   console.log("//----------------------------------------------------------------------//");
   console.log("//------------//     Ending "+migrationName+" Migration     //-----------//");
   console.log("//----------------------------------------------------------------------//");
-}
+};
 
 var migrationsList = {
   updatePostStatus: function () {
@@ -119,21 +128,24 @@ var migrationsList = {
       i++;
       console.log('> Updating user '+user._id+' ('+user.username+')');
 
+      var properties = {};
       // update user slug
       if(getUserName(user))
-        Meteor.users.update(user._id, {$set:{slug: slugify(getUserName(user))}});
+        properties.slug = slugify(getUserName(user));
 
       // update user isAdmin flag
       if(typeof user.isAdmin === 'undefined')
-        Meteor.users.update(user._id, {$set: {isAdmin: false}});
+        properties.isAdmin = false;
 
       // update postCount
       var postsByUser = Posts.find({userId: user._id});
-      Meteor.users.update(user._id, {$set: {postCount: postsByUser.count()}});
+      properties.postCount = postsByUser.count();
       
       // update commentCount
       var commentsByUser = Comments.find({userId: user._id});
-      Meteor.users.update(user._id, {$set: {commentCount: commentsByUser.count()}});
+      properties.commentCount = commentsByUser.count();
+
+      Meteor.users.update(user._id, {$set:properties});
 
     });
     return i;
@@ -216,7 +228,7 @@ var migrationsList = {
         console.log("Posts: "+post.title);
         var createdAt = new Date(post.createdAt);
         var submitted = new Date(post.submitted);
-        console.log(createdAt)
+        console.log(createdAt);
         Posts.update(post._id, { $set: { 'createdAt': createdAt, submitted: submitted}}, {multi: true, validate: false});
         console.log("---------------------");
       }
@@ -282,22 +294,12 @@ var migrationsList = {
     });
     return i;
   },
-  deleteNotifications: function () {
+  commentsToCommentCount: function () {
     var i = 0;
-    Notifications.find().forEach(function (n) {
-      i++;
-      console.log("Notification: "+n._id);
-      Notifications.remove(n._id);
-      console.log("---------------------");
-    });
-    return i;
-  },
-  commentsToCommentsCount: function () {
-    var i = 0;
-    Posts.find({commentsCount: {$exists : false}}).forEach(function (post) {
+    Posts.find({comments: {$exists : true}, commentCount: {$exists : false}}).forEach(function (post) {
       i++;
       console.log("Post: "+post._id);
-      Posts.update(post._id, { $rename: { 'comments': 'commentsCount'}}, {multi: true, validate: false});
+      Posts.update(post._id, { $set: { 'commentCount': post.comments}, $unset: { 'comments': ''}}, {multi: true, validate: false});
       console.log("---------------------");
     });
     return i;
@@ -312,5 +314,120 @@ var migrationsList = {
       console.log("---------------------");
     });
     return i;
+  },
+  createVotes: function () { // create empty user.votes object
+    var i = 0;
+    Meteor.users.find({votes: {$exists : false}}).forEach(function (user) {
+      i++;
+      console.log("User: "+user._id);
+      Meteor.users.update(user._id, {$set: {votes: {}}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  moveVotesFromProfile: function () {
+    var i = 0;
+    Meteor.users.find().forEach(function (user) {
+      i++;
+      console.log("User: "+user._id);
+      Meteor.users.update(user._id, {
+        $rename: {
+          'profile.upvotedPosts': 'votes.upvotedPosts',
+          'profile.downvotedPosts': 'votes.downvotedPosts',
+          'profile.upvotedComments': 'votes.upvotedComments',
+          'profile.downvotedComments': 'votes.downvotedComments'
+        }
+      }, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  addHTMLBody: function () {
+    var i = 0;
+    Posts.find({body: {$exists : true}}).forEach(function (post) {
+      i++;
+      var htmlBody = sanitize(marked(post.body));
+      console.log("Post: "+post._id);
+      Posts.update(post._id, { $set: { 'htmlBody': htmlBody}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  addHTMLComment: function () {
+    var i = 0;
+    Comments.find({body: {$exists : true}}).forEach(function (comment) {
+      i++;
+      var htmlBody = sanitize(marked(comment.body));
+      console.log("Comment: "+comment._id);
+      Comments.update(comment._id, { $set: { 'htmlBody': htmlBody}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  clicksToClickCount: function () {
+    var i = 0;
+    Posts.find({"clicks": {$exists: true}, "clickCount": {$exists : false}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      Posts.update(post._id, { $set: { 'clickCount': post.clicks}, $unset: { 'clicks': ''}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  commentsCountToCommentCount: function () {
+    var i = 0;
+    Posts.find({"commentCount": {$exists : false}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var result = Posts.update({_id: post._id}, { $set: { 'commentCount': post.commentsCount}, $unset: {'commentsCount': ""}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  userDataCommentsCountToCommentCount: function(){
+    var i = 0;
+    Meteor.users.find({'commentCount': {$exists: false}}).forEach(function(user){
+      i++;
+      var commentCount = Comments.find({userId: user._id}).count();
+      console.log("User: " + user._id);
+      Meteor.users.update(user._id, {$unset: {data: ""}, $set: {'commentCount': commentCount}});
+      console.log("---------------------");
+    });
+    return i;
+   },
+  clicksToClickCountForRealThisTime: function () { // since both fields might be co-existing, add to clickCount instead of overwriting it
+    var i = 0;
+    Posts.find({'clicks': {$exists: true}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var result = Posts.update(post._id, { $inc: { 'clickCount': post.clicks}, $unset: {'clicks': ""}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;
+  },
+  normalizeCategories: function () {
+    var i = 0;
+    Posts.find({'categories': {$exists: true}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var justCategoryIds = post.categories.map(function (category){
+        return category._id;
+      });
+      var result = Posts.update(post._id, {$set: {categories: justCategoryIds, oldCategories: post.categories}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;    
+  },
+  cleanUpStickyProperty: function () {
+    var i = 0;
+    Posts.find({'sticky': {$exists: false}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var result = Posts.update(post._id, {$set: {sticky: false}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;    
   }
-}
+};
+
+// TODO: normalize categories?
