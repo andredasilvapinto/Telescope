@@ -1,27 +1,44 @@
 // category schema
 categorySchema = new SimpleSchema({
- _id: {
+  name: {
+    type: String
+  },
+  description: {
     type: String,
-    optional: true
+    optional: true,
+    autoform: {
+      rows: 3
+    }
   },
   order: {
     type: Number,
     optional: true
   },
   slug: {
-    type: String
-  },
-  name: {
-    type: String
-  },    
+    type: String,
+    optional: true,
+    autoform: {
+    }
+  }
 });
 
-Categories = new Meteor.Collection("categories", {
-  schema: categorySchema
+Categories = new Meteor.Collection("categories");
+Categories.attachSchema(categorySchema);
+
+Categories.before.insert(function (userId, doc) {
+  // if no slug has been provided, generate one
+  if (!doc.slug)
+    doc.slug = slugify(doc.name);
 });
 
 // we want to wait until categories are all loaded to load the rest of the app
 preloadSubscriptions.push('categories');
+
+adminNav.push({
+  route: 'categories',
+  label: 'Categories',
+  description: 'add_and_remove_categories'
+});
 
 // category post list parameters
 viewParameters.category = function (terms) {
@@ -35,7 +52,7 @@ viewParameters.category = function (terms) {
 // push "categories" modules to postHeading
 postHeading.push({
   template: 'postCategories',
-  order: 3
+  order: 30
 });
   
 // push "categoriesMenu" template to primaryNav
@@ -68,9 +85,9 @@ addToPostSchema.push(
 
 Meteor.startup(function () {
   Categories.allow({
-    insert: isAdminById
-  , update: isAdminById
-  , remove: isAdminById
+    insert: isAdminById,
+    update: isAdminById,
+    remove: isAdminById
   });
 
   Meteor.methods({

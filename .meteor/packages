@@ -25,7 +25,7 @@ meteorhacks:fast-render
 meteorhacks:subs-manager
 meteorhacks:npm
 
-aldeed:autoform@4.0.0-rc1
+aldeed:autoform
 aldeed:collection2
 aldeed:simple-schema
 
@@ -34,6 +34,7 @@ mrt:cookies
 mrt:moment
 mrt:mailchimp
 
+ccan:cssreset # CSS reset (Must come before any other css)
 cmather:handlebars-server
 sacha:spin
 sacha:juice
@@ -46,8 +47,8 @@ rajit:bootstrap3-datepicker
 bengott:avatar
 jparker:gravatar
 tap:i18n
-# CSS reset (Must come before any other css)
-ccan:cssreset
+useraccounts:unstyled@1.4.0
+tsega:bootstrap3-datetimepicker@3.1.3_1
 
 # Telescope Packages (Required)
 
@@ -57,6 +58,7 @@ telescope-i18n
 
 # Telescope Packages (Optional)
 
+telescope-datetimepicker
 telescope-theme-base
 telescope-module-share
 telescope-api
@@ -73,9 +75,6 @@ telescope-kadira
 telescope-notifications
 telescope-singleday
 telescope-invites
+telescope-post-by-feed
 
-# Accounts Templates
-useraccounts:unstyled@1.4.0
-
-telescope-datetimepicker
-tsega:bootstrap3-datetimepicker@3.1.3_1
+# Custom Packages
